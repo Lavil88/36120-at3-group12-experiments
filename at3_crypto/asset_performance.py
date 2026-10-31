@@ -84,3 +84,52 @@ def add_api_target(df: pd.DataFrame, horizon: int = FORECAST_HORIZON) -> pd.Data
     out["API_target"] = out.groupby("token", sort=False)["API_t"].shift(-horizon)
     out["target_date"] = out["date"] + pd.Timedelta(days=horizon)
     return out
+
+
+def add_projected_api(df: pd.DataFrame, horizon: int = FORECAST_HORIZON) -> pd.DataFrame:
+    """Add API_proj: the index expected on day t+horizon if nothing changes after today.
+
+    Every 20-day window used on day t+7 covers days t-12 to t+7, so 13 of its 20 days are
+    already known on day t. This feature keeps those known days exactly and fills the 7 unknown
+    days with a simple "nothing changes" assumption:
+        - the price stays at today's close (so the 7 future daily returns are 0)
+        - daily volume stays at its current 20-day average
+    It only uses data up to day t, so it does not leak future information.
+    Needs the columns token, date, close and volume.
+    """
+    window = 20
+    known = window - horizon  # 13 days of the future window are already known
+
+    out = df.sort_values(["token", "date"]).reset_index(drop=True)
+    by_token = out.groupby("token", sort=False)
+    close = out["close"]
+
+    # Return20 on day t+7 compares the close on t+7 (assumed = today's close) with the close on t-13
+    return20_proj = close / by_token["close"].shift(known) - 1
+
+    # MA5 on day t+7 only contains future days, all assumed equal to today's close.
+    # MA20 on day t+7 = the 13 known closes (t-12..t) plus 7 future closes equal to today's close.
+    ma20_proj = (by_token["close"].transform(lambda s: s.rolling(known).sum()) + horizon * close) / window
+    trend_proj = close / ma20_proj - 1
+
+    # Volatility20 on day t+7 = sample std of 13 known daily returns plus 7 future returns of 0
+    daily_return = by_token["close"].pct_change(fill_method=None)
+    ret_sum = daily_return.groupby(out["token"], sort=False).transform(lambda s: s.rolling(known).sum())
+    ret_sq_sum = (daily_return**2).groupby(out["token"], sort=False).transform(lambda s: s.rolling(known).sum())
+    mean_return = ret_sum / window
+    variance = (ret_sq_sum - window * mean_return**2) / (window - 1)
+    volatility_proj = variance.clip(lower=0) ** 0.5
+
+    # RelativeVolume on day t+7: future volume assumed equal to today's 20-day average volume
+    volume_avg = by_token["volume"].transform(lambda s: s.rolling(window).mean())
+    volume_known = by_token["volume"].transform(lambda s: s.rolling(known).sum())
+    relvol_proj = volume_avg / ((volume_known + horizon * volume_avg) / window)
+
+    projected_inputs = pd.DataFrame({
+        "Return20": return20_proj,
+        "TrendStrength": trend_proj,
+        "RelativeVolume": relvol_proj,
+        "Volatility20": volatility_proj,
+    })
+    out["API_proj"] = asset_performance_index(projected_inputs)
+    return out
