@@ -6,7 +6,7 @@
 |---|---|---|---|---|---|
 | A | Chakshu Karwal | 26038226 | Asset Performance Index (API) | XGBoost regression | `notebooks/36120_26SP_AT3_group12_26038226_experiment.ipynb` |
 | B | Prachi Pramod Dhimate | 26060133 | Market Risk Index (MRI) | LightGBM regression | `notebooks/36120_26SP_AT3_group_12_student_26060133_experiment.ipynb` |
-| C | _to fill_ | _to fill_ | Trend Category (TC) | XGBoost classification | _to fill_ |
+| C | Lavil Saldanha | 26036727 | Trend Category (TC) | XGBoost classification | `notebooks/36120_26SP_AT3_group12_26036727_experiment.ipynb` |
 | D | Vedang Gosavi | 26059271 | Trading Opportunity Rating (TOR) | LightGBM classification | `notebooks/36120_26SP_AT3_group12_26059271_experiment.ipynb` |
 
 Related repositories: Streamlit front-end and four FastAPI services (one per student), listed in the
@@ -97,16 +97,23 @@ minutes in total (Optuna runs 60 trials). All models use `n_jobs=1` for reproduc
 Student A's notebook takes about 3 minutes (Optuna runs 60 trials in about 2 minutes). Section C.1
 also calls the live Kraken API as a check; set `CHECK_LIVE_API = False` there to run fully offline.
 Its train, validation and test files are written to `data/processed/26038226/`.
+
+Student C's notebook takes about 7 minutes (Optuna runs 60 trials, each scored on 3 walk-forward folds).
+It trains on the shared snapshot `kraken_ohlc_daily_20261022.csv` and computes its features in the notebook
+with the same formulas as `at3_crypto/features.py`. It uses all CPU cores (`n_jobs=-1`); repeated runs on
+the same machine gave identical results. Its train, validation and test files are written to
+`data/processed/26036727/`.
+
 ## Model artefacts
 
 | Student | Folder | Contents |
 |---|---|---|
 | A | `models/26038226/experiment_1/` | `api_xgb.joblib` (XGBoost model), `api_metadata.json` (feature order, importance, outage scenarios, hyperparameters, test metrics) |
-| D | `models/26059271/experiment_1/` | `tor_lgbm.joblib` (LightGBM model), `tor_metadata.json` (features, importance, labels, hyperparameters, test metrics) |
-| D | `models/tor_label_map.json` | fixed class id to label mapping |
-
 | B | `models/` | `student_b_mri_lightgbm.joblib` (final LightGBM regression model) |
 | B | `models/` | `student_b_mri_metadata.json` (model features, parameters and evaluation metrics) |
+| C | `models/26036727/experiment_1/` | `tc_xgb.joblib` (XGBoost classifier), `tc_metadata.json` (features, importance, labels, hyperparameters, test metrics) |
+| D | `models/26059271/experiment_1/` | `tor_lgbm.joblib` (LightGBM model), `tor_metadata.json` (features, importance, labels, hyperparameters, test metrics) |
+| D | `models/tor_label_map.json` | fixed class id to label mapping |
 
 
 ## Collaboration workflow
