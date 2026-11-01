@@ -53,17 +53,16 @@ The notebooks load the latest snapshot; set `REFRESH_DATA = True` in section C.1
 python -m at3_crypto.dataset
 ```
 
-to download a new one. The snapshot used for the reported results (`kraken_ohlc_daily_20261022.csv`)
-is committed, so results can be reproduced exactly.
+to download a new one. The shared Kraken snapshot (kraken_ohlc_daily_20261022.csv) is committed for reproducibility of experiments that use it. Student B's experiment uses the assignment-provided dataset, as described below.
 
 
 ### Student B — MRI Experiment Dataset
 
-Student B's Market Risk Index (MRI) regression experiment uses the historical cryptocurrency dataset provided with the AT3 assignment (CoinMarketCap data), rather than the shared Kraken snapshot.
+The experiment uses the historical cryptocurrency dataset provided with the AT3 assignment (CoinMarketCap data) for exploratory data analysis, feature engineering, target construction, training, validation and testing.
 
-The dataset is used for exploratory data analysis, feature engineering, target construction, model training, validation, and testing. The final Optuna-tuned LightGBM regression model predicts MRI seven days ahead.
+The model uses 13 engineered features covering returns, momentum, moving averages, volatility, drawdown, gap risk and trading volume. A LightGBM regressor was optimised using Optuna with 50 trials. Model performance was evaluated using RMSE, MAE and R².
 
-The Student B FastAPI service separately retrieves live cryptocurrency data from the public Kraken API for inference.
+The deployed Student B FastAPI service retrieves live cryptocurrency data from the public Kraken API for inference and integrates engineered features from the other students' FastAPI services.
 
 #### Reproducing Student B's Experiment
 
