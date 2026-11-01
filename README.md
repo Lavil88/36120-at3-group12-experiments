@@ -5,7 +5,7 @@
 | Student | Name | Student ID | Target | Model | Notebook |
 |---|---|---|---|---|---|
 | A | Chakshu Karwal | 26038226 | Asset Performance Index (API) | XGBoost regression | `notebooks/36120_26SP_AT3_group12_26038226_experiment.ipynb` |
-| B | _to fill_ | _to fill_ | Market Risk Index (MRI) | LightGBM regression | _to fill_ |
+| B | Prachi Pramod Dhimate | 26060133 | Market Risk Index (MRI) | LightGBM regression | `notebooks/36120_26SP_AT3_group_12_student_26060133_experiment.ipynb` |
 | C | _to fill_ | _to fill_ | Trend Category (TC) | XGBoost classification | _to fill_ |
 | D | Vedang Gosavi | 26059271 | Trading Opportunity Rating (TOR) | LightGBM classification | `notebooks/36120_26SP_AT3_group12_26059271_experiment.ipynb` |
 
