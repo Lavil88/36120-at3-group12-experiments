@@ -4,8 +4,8 @@
 
 | Student | Name | Student ID | Target | Model | Notebook |
 |---|---|---|---|---|---|
-| A | _to fill_ | _to fill_ | Asset Performance Index (API) | XGBoost regression | _to fill_ |
-| B | Prachi Pramod Dhimate | 26060133 | Market Risk Index (MRI) | LightGBM regression | `notebooks/36120_26SP_AT3_group_12_student_26060133_experiment.ipynb` |
+| A | Chakshu Karwal | 26038226 | Asset Performance Index (API) | XGBoost regression | `notebooks/36120_26SP_AT3_group12_26038226_experiment.ipynb` |
+| B | _to fill_ | _to fill_ | Market Risk Index (MRI) | LightGBM regression | _to fill_ |
 | C | _to fill_ | _to fill_ | Trend Category (TC) | XGBoost classification | _to fill_ |
 | D | Vedang Gosavi | 26059271 | Trading Opportunity Rating (TOR) | LightGBM classification | `notebooks/36120_26SP_AT3_group12_26059271_experiment.ipynb` |
 
@@ -19,6 +19,7 @@ config.py project paths
 dataset.py Kraken OHLCV download, dated snapshots (python -m at3_crypto.dataset)
 features.py every engineered feature from the brief + TOR engineered features
 target.py TOR target (Opportunity Score, 5 classes, t+7)
+asset_performance.py Student A target (Asset Performance Index, t+7) and projected index (API_proj)
 data/raw/ dated Kraken snapshots (the snapshot used for the results is committed)
 data/processed/ train/validation/test splits written by the notebooks (not committed)
 models/ final model artefacts, one folder per student and experiment
@@ -93,10 +94,14 @@ jupyter lab notebooks
 Select the `.venv` kernel and run all cells from the top. Student D's notebook takes about 5 to 10
 minutes in total (Optuna runs 60 trials). All models use `n_jobs=1` for reproducibility on Windows.
 
+Student A's notebook takes about 3 minutes (Optuna runs 60 trials in about 2 minutes). Section C.1
+also calls the live Kraken API as a check; set `CHECK_LIVE_API = False` there to run fully offline.
+Its train, validation and test files are written to `data/processed/26038226/`.
 ## Model artefacts
 
 | Student | Folder | Contents |
 |---|---|---|
+| A | `models/26038226/experiment_1/` | `api_xgb.joblib` (XGBoost model), `api_metadata.json` (feature order, importance, outage scenarios, hyperparameters, test metrics) |
 | D | `models/26059271/experiment_1/` | `tor_lgbm.joblib` (LightGBM model), `tor_metadata.json` (features, importance, labels, hyperparameters, test metrics) |
 | D | `models/tor_label_map.json` | fixed class id to label mapping |
 
